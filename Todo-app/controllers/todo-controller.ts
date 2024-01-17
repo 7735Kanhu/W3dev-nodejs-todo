@@ -34,11 +34,11 @@ export const createTodo = async (req: Request, res: Response) => {
     })
   };
 
-  export const getTodo = async(req: Request, res: Response) => {
+  export const updateTodo = async(req: Request, res: Response) => {
     const id = req.params._id;
     const {title} = req.body;
     try {
-        const todo = await Todo.findById(id, { title})
+        const todo = await Todo.findByIdAndUpdate(id, { title})
         if(!todo){
             return res.status(404).json({
                 message: "No todo here add todo first"

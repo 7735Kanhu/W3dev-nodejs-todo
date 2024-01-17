@@ -12,6 +12,11 @@ interface TodoItem {
 const Home: React.FC = () => {
     const [todos,setTodos] = useState<string>('')
     const [todo,setTodo] = useState<TodoItem[]>([])
+    const [isEdit,setIsEdit] = useState<boolean>(false)
+    const [editdata,setEditData]= useState<number | null>(null)
+
+
+
     const handleSubmit = async()=>{
         const resp = await axios.post('http://localhost:8080/todos', {title: todos});
         const data = await resp.data
@@ -30,6 +35,25 @@ const Home: React.FC = () => {
         }
         
     }
+    const handleEdit = async (id: string, title: string)=>{
+        console.log(title);
+        setIsEdit(true)
+
+        try {
+            setTodos(title)
+            const resp = await axios.put(`http://localhost:8080/todos/${id}`,{title:todos})
+            const data = await resp.data
+            console.log(data);
+            
+            // if(data){
+            //     setTodos('')
+            // }
+        
+        } catch (error) {
+            console.error('Error updating todo:', error);
+        }
+        
+    }
     const handleDelete = (id: string)=>{
             axios.delete(`http://localhost:8080/todos/${id}`)
     }
@@ -44,7 +68,9 @@ const Home: React.FC = () => {
         <h1>TODO LIST</h1>
         <div className="input-todo">
             <input type="text" placeholder="Write your todo todo here..." value={todos} onChange={(e)=>setTodos(e.target.value)}/>
-            <button onClick={handleSubmit}>ADD TODO</button>
+            {
+                isEdit ?<button onClick={handleEdit}>UPDATE TODO</button> :<button onClick={handleSubmit}>ADD TODO</button>
+            }
         </div>
         <div className="todo-list">
             <h2>List Of Todo</h2>
@@ -55,7 +81,7 @@ const Home: React.FC = () => {
                             return <li key={item.id}>
                             {item.title}
                             <div className="action">
-                            <FaRegEdit />
+                            <FaRegEdit onClick={()=>handleEdit(item._id, item.title)}/>
                             <MdDeleteOutline onClick={()=>handleDelete(item._id)} />
                             </div>
                             </li>
