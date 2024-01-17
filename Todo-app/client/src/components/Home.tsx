@@ -15,10 +15,8 @@ const Home: React.FC = () => {
     const handleSubmit = async()=>{
         const resp = await axios.post('http://localhost:8080/todos', {title: todos});
         const data = await resp.data
-            if(data && data.length){
+            if(data){
                 setTodos('')
-                console.log(todos);
-                
             }
         
 
