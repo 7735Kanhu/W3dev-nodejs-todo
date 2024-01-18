@@ -36,18 +36,22 @@ const Home: React.FC = () => {
         
     }
     const handleEdit = async (id: string, title: string)=>{
-        console.log(title);
         setIsEdit(true)
-
+        setEditData(id)
+        setTodos(title)
+        
+    }
+    const handleUpdate = async ()=>{
         try {
-            setTodos(title)
-            const resp = await axios.put(`http://localhost:8080/todos/${id}`,{title:todos})
+            const resp = await axios.put(`http://localhost:8080/todos/${editdata}`,{title:todos})
             const data = await resp.data
-            console.log(data);
+            // console.log(data);
             
-            // if(data){
-            //     setTodos('')
-            // }
+            if(data){
+                setTodos('')
+                setEditData(null)
+                setIsEdit(false)
+            }
         
         } catch (error) {
             console.error('Error updating todo:', error);
@@ -67,9 +71,9 @@ const Home: React.FC = () => {
     <div className="add-todo">
         <h1>TODO LIST</h1>
         <div className="input-todo">
-            <input type="text" placeholder="Write your todo todo here..." value={todos} onChange={(e)=>setTodos(e.target.value)}/>
+            <input type="text" placeholder="Write your todo todo here..." value={todos} onChange={(e)=>setTodos(e.target.value)} autoFocus/>
             {
-                isEdit ?<button onClick={handleEdit}>UPDATE TODO</button> :<button onClick={handleSubmit}>ADD TODO</button>
+                isEdit ?<button onClick={handleUpdate}>UPDATE TODO</button> :<button onClick={handleSubmit}>ADD TODO</button>
             }
         </div>
         <div className="todo-list">
@@ -81,7 +85,7 @@ const Home: React.FC = () => {
                             return <li key={item.id}>
                             {item.title}
                             <div className="action">
-                            <FaRegEdit onClick={()=>handleEdit(item._id, item.title)}/>
+                            <FaRegEdit onClick={()=>handleEdit(item._id,item.title)}/>
                             <MdDeleteOutline onClick={()=>handleDelete(item._id)} />
                             </div>
                             </li>
